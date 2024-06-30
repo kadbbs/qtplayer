@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/v">
+        <file>forest_fire.mp4</file>
+    </qresource>
+</RCC>
