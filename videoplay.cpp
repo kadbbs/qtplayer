@@ -1,7 +1,7 @@
 #include "videoplay.h"
-videoplay::videoplay()
+videoplay::videoplay(QWidget *parentWidget)
 {
-
+//    player = new QMediaPlayer(parentWidget);
 }
 
 

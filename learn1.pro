@@ -28,12 +28,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     glplay.cpp \
-    videoplay.cpp
+    videoplay.cpp \
+    mylistview.cpp
 
 HEADERS += \
         mainwindow.h \
     glplay.h \
-    videoplay.h
+    videoplay.h \
+    mylistview.h
 
 FORMS += \
         mainwindow.ui

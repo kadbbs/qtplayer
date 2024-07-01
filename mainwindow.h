@@ -23,7 +23,9 @@
 #include <QStringListModel>
 #include <cmath>
 #include <QDebug>
+
 #include "videoplay.h"
+#include "mylistview.h"
 
 namespace Ui {
 class MainWindow;
@@ -47,9 +49,13 @@ private slots:
     void onListViewClicked(const QModelIndex &index);
     void vpause();
     void vstart();
+    void vstop();
     void updatePosition(qint64 position);
     void setPosition(int position);
     void updateDuration(qint64 duration);
+    void updateSliderPosition();
+    void handleRightClick(const QModelIndex &index, const QPoint &pos);
+
 
 
 
@@ -59,6 +65,8 @@ private:
     QVector<QString> pathlist;
     QStringListModel *model;
     videoplay *vp;
+    QTimer *positionUpdateTimer;
+    qint64 currentPosition;
 
 
 };
