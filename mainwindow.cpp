@@ -3,7 +3,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    player(new QMediaPlayer(this) )
 {
     ui->setupUi(this);
     positionUpdateTimer=(new QTimer(this));
@@ -11,8 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
     model = new QStringListModel(this);
     ui->crrent_file->setModel(model);
 
-    vp=new videoplay(this);
-        ui->positionSlider->setTickPosition(QSlider::TicksBelow);
+    vp=new videoplay(this,player);
+    ui->positionSlider->setTickPosition(QSlider::TicksBelow);
     ui->positionSlider->setTickInterval(1000);
 
     connect(ui->openfile,&QAction::triggered,this,&MainWindow::openfile);
@@ -25,9 +26,37 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->stop, &QPushButton::clicked, this, &MainWindow::vstop);
     connect(ui->crrent_file, &MyListView::rightClicked, this, &MainWindow::handleRightClick);
 
-    connect(positionUpdateTimer, &QTimer::timeout, this, &MainWindow::updateSliderPosition);
-    positionUpdateTimer->start(500); // Update every 100 milliseconds
 
+#if 0
+    PlayerControls *controls = new PlayerControls(this);
+    controls->setState(player->state());
+    controls->setVolume(player->volume());
+    controls->setMuted(controls->isMuted());
+
+    connect(controls, &PlayerControls::play, player, &QMediaPlayer::play);
+    connect(controls, &PlayerControls::pause, player, &QMediaPlayer::pause);
+    connect(controls, &PlayerControls::stop, player, &QMediaPlayer::stop);
+
+    connect(controls, &PlayerControls::changeVolume, player, &QMediaPlayer::setVolume);
+    connect(controls, &PlayerControls::changeMuting, player, &QMediaPlayer::setMuted);
+    connect(controls, &PlayerControls::changeRate, player, &QMediaPlayer::setPlaybackRate);
+
+    connect(player, &QMediaPlayer::stateChanged, controls, &PlayerControls::setState);
+    connect(player, &QMediaPlayer::volumeChanged, controls, &PlayerControls::setVolume);
+    connect(player, &QMediaPlayer::mutedChanged, controls, &PlayerControls::setMuted);
+
+#endif
+    // 连接滑块信号和槽函数
+    connect(player, &QMediaPlayer::positionChanged, this, &MainWindow::updatePosition);
+    qDebug()<<"&QMediaPlayer::positionChanged";
+    connect(player, &QMediaPlayer::durationChanged, this, &MainWindow::updateDuration);
+    connect(ui->positionSlider, &QSlider::valueChanged, this, &MainWindow::setPosition);
+
+
+    ui->positionSlider->setRange(0,player->duration()/1000);
+    m_labelDuration = new QLabel(this);
+    connect(ui->positionSlider, &QSlider::sliderMoved, this, &MainWindow::seek);
+    ui->widget->setLayout(new QVBoxLayout);
 
     readline();
 }
@@ -131,11 +160,9 @@ void MainWindow::onListViewClicked(const QModelIndex &index)
 
     vp->path_=index.data().toString();
     vp->vpaly(this,ui->widget);
-    // 连接滑块信号和槽函数
-    connect(vp->player, &QMediaPlayer::positionChanged, this, &MainWindow::updatePosition);
-    qDebug()<<"&QMediaPlayer::positionChanged";
-    connect(vp->player, &QMediaPlayer::durationChanged, this, &MainWindow::updateDuration);
-    connect(ui->positionSlider, &QSlider::valueChanged, this, &MainWindow::setPosition);
+
+
+
 #if 0
     qDebug()<<"vp->player->duration() is : "<<vp->player->duration();
     ui->positionSlider->setMaximum(vp->player->duration());
@@ -163,7 +190,11 @@ void MainWindow::vstop()
 void MainWindow::updatePosition(qint64 position)
 {
 //    ui->positionSlider->setValue(position);
-    currentPosition = position;
+//    currentPosition = position;
+//    if (!ui->positionSlider->isSliderDown())
+//        ui->positionSlider->setValue(position / 1000);
+    QTime time = QTime(0, 0).addSecs(position / 1000);
+    ui->timeshow->setText(time.toString("HH:mm:ss"));
 }
 
 void MainWindow::setPosition(int position)
@@ -174,7 +205,10 @@ void MainWindow::setPosition(int position)
 
 void MainWindow::updateDuration(qint64 duration)
 {
+
     ui->positionSlider->setMaximum(duration);
+    QTime time = QTime(0, 0).addSecs(duration / 1000);
+    ui->alltime->setText("/"+time.toString("HH:mm:ss"));
 
 
 }
@@ -192,10 +226,12 @@ void MainWindow::handleRightClick(const QModelIndex &index, const QPoint &pos)
     }
 
     QMenu contextMenu(this);
-    QAction action1("Action 1", this);
+    QAction action1("删除", this);
     QAction action2("Action 2", this);
-    connect(&action1, &QAction::triggered, this, [index]() {
-        qDebug() << "Action 1 triggered on item at row" << index.row();
+    connect(&action1, &QAction::triggered, this, [this,index]() {
+        qDebug() << "删除 triggered on item at row" << index.row();
+        pathlist.removeAll(index.data().toString());
+        update_crrent_file();
     });
     connect(&action2, &QAction::triggered, this, [index]() {
         qDebug() << "Action 2 triggered on item at row" << index.row();
@@ -205,4 +241,10 @@ void MainWindow::handleRightClick(const QModelIndex &index, const QPoint &pos)
     contextMenu.addAction(&action2);
 
     contextMenu.exec(ui->crrent_file->mapToGlobal(pos));
+}
+
+void MainWindow::seek(int seconds)
+{
+    player->setPosition(seconds * 1000);
+
 }

@@ -16,6 +16,7 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QTimer>
+#include <QTime>
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QOpenGLTexture>
@@ -23,7 +24,8 @@
 #include <QStringListModel>
 #include <cmath>
 #include <QDebug>
-
+#include "playercontrols.h"
+#include <QLabel>
 #include "videoplay.h"
 #include "mylistview.h"
 
@@ -56,7 +58,7 @@ private slots:
     void updateSliderPosition();
     void handleRightClick(const QModelIndex &index, const QPoint &pos);
 
-
+    void seek(int seconds);
 
 
 private:
@@ -67,6 +69,8 @@ private:
     videoplay *vp;
     QTimer *positionUpdateTimer;
     qint64 currentPosition;
+    QMediaPlayer* player;
+    QLabel *m_labelDuration = nullptr;
 
 
 };

@@ -6,6 +6,7 @@
 
 QT       += core gui multimedia multimediawidgets widgets opengl
 
+QMAKE_LFLAGS += -no-pie
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = learn1
@@ -29,13 +30,15 @@ SOURCES += \
         mainwindow.cpp \
     glplay.cpp \
     videoplay.cpp \
-    mylistview.cpp
+    mylistview.cpp \
+    playercontrols.cpp
 
 HEADERS += \
         mainwindow.h \
     glplay.h \
     videoplay.h \
-    mylistview.h
+    mylistview.h \
+    playercontrols.h
 
 FORMS += \
         mainwindow.ui

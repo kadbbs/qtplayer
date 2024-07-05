@@ -15,7 +15,7 @@ class videoplay
 {
 
 public:
-    videoplay(QWidget *parentWidget);
+    videoplay(QWidget *parentWidget,QMediaPlayer* p);
     void vpaly(QWidget *parentWidget,QWidget *vp);
 
 

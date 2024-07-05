@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>822</width>
-    <height>478</height>
+    <width>1374</width>
+    <height>704</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,10 +23,10 @@
    <widget class="MyListView" name="crrent_file">
     <property name="geometry">
      <rect>
-      <x>540</x>
+      <x>1055</x>
       <y>0</y>
-      <width>256</width>
-      <height>301</height>
+      <width>281</width>
+      <height>531</height>
      </rect>
     </property>
    </widget>
@@ -35,8 +35,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>521</width>
-      <height>301</height>
+      <width>981</width>
+      <height>531</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -49,8 +49,8 @@
    <widget class="QSlider" name="positionSlider">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>320</y>
+      <x>40</x>
+      <y>560</y>
       <width>491</width>
       <height>16</height>
      </rect>
@@ -68,8 +68,8 @@
    <widget class="QPushButton" name="button_start">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>340</y>
+      <x>60</x>
+      <y>580</y>
       <width>89</width>
       <height>25</height>
      </rect>
@@ -81,8 +81,8 @@
    <widget class="QPushButton" name="button_pause">
     <property name="geometry">
      <rect>
-      <x>140</x>
-      <y>340</y>
+      <x>170</x>
+      <y>580</y>
       <width>89</width>
       <height>25</height>
      </rect>
@@ -94,8 +94,8 @@
    <widget class="QPushButton" name="stop">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>340</y>
+      <x>280</x>
+      <y>580</y>
       <width>89</width>
       <height>25</height>
      </rect>
@@ -104,13 +104,39 @@
      <string>stop</string>
     </property>
    </widget>
+   <widget class="QLabel" name="timeshow">
+    <property name="geometry">
+     <rect>
+      <x>561</x>
+      <y>561</y>
+      <width>99</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="alltime">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>560</y>
+      <width>81</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>822</width>
+     <width>1374</width>
      <height>28</height>
     </rect>
    </property>
