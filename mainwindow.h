@@ -71,6 +71,7 @@ private:
     qint64 currentPosition;
     QMediaPlayer* player;
     QLabel *m_labelDuration = nullptr;
+    QString totaltime;
 
 
 };

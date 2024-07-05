@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(player, &QMediaPlayer::positionChanged, this, &MainWindow::updatePosition);
     qDebug()<<"&QMediaPlayer::positionChanged";
     connect(player, &QMediaPlayer::durationChanged, this, &MainWindow::updateDuration);
-    connect(ui->positionSlider, &QSlider::valueChanged, this, &MainWindow::setPosition);
+    connect(ui->positionSlider, &QSlider::sliderMoved, this, &MainWindow::setPosition);
 
 
     ui->positionSlider->setRange(0,player->duration()/1000);
@@ -192,9 +192,9 @@ void MainWindow::updatePosition(qint64 position)
 //    ui->positionSlider->setValue(position);
 //    currentPosition = position;
 //    if (!ui->positionSlider->isSliderDown())
-//        ui->positionSlider->setValue(position / 1000);
+    ui->positionSlider->setValue(position / 1000);
     QTime time = QTime(0, 0).addSecs(position / 1000);
-    ui->timeshow->setText(time.toString("HH:mm:ss"));
+    ui->timeshow->setText(time.toString("HH:mm:ss")+"/"+totaltime);
 }
 
 void MainWindow::setPosition(int position)
@@ -206,9 +206,10 @@ void MainWindow::setPosition(int position)
 void MainWindow::updateDuration(qint64 duration)
 {
 
-    ui->positionSlider->setMaximum(duration);
+    ui->positionSlider->setMaximum(duration / 1000);
     QTime time = QTime(0, 0).addSecs(duration / 1000);
-    ui->alltime->setText("/"+time.toString("HH:mm:ss"));
+    totaltime=time.toString("HH:mm:ss");
+//    ui->alltime->setText("/"+totaltime);
 
 
 }
