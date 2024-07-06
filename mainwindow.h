@@ -28,6 +28,8 @@
 #include <QLabel>
 #include "videoplay.h"
 #include "mylistview.h"
+#include <QLineEdit>
+#include <QInputDialog>
 
 namespace Ui {
 class MainWindow;
@@ -60,6 +62,9 @@ private slots:
 
     void seek(int seconds);
 
+    void setSpeed(const QString &text);
+protected:
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     Ui::MainWindow *ui;
@@ -72,6 +77,8 @@ private:
     QMediaPlayer* player;
     QLabel *m_labelDuration = nullptr;
     QString totaltime;
+    QLabel *imageLabel;
+
 
 
 };

@@ -52,13 +52,43 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(player, &QMediaPlayer::durationChanged, this, &MainWindow::updateDuration);
     connect(ui->positionSlider, &QSlider::sliderMoved, this, &MainWindow::setPosition);
 
+    connect(ui->comboBox, &QComboBox::currentTextChanged, this, &MainWindow::setSpeed);
+    ui->comboBox->addItem("1.0x", 1.0);
+    ui->comboBox->addItem("1.5x", 1.5);
+    ui->comboBox->addItem("2.0x", 2.0);
 
     ui->positionSlider->setRange(0,player->duration()/1000);
     m_labelDuration = new QLabel(this);
     connect(ui->positionSlider, &QSlider::sliderMoved, this, &MainWindow::seek);
     ui->widget->setLayout(new QVBoxLayout);
 
+
+
+
+    imageLabel = new QLabel(ui->widget);
+    imageLabel->setAlignment(Qt::AlignCenter);
+    imageLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    // 加载并设置图片
+    QString imagePath="/home/bbs/Pictures/bbplayer.png";
+
+    QPixmap pixmap(imagePath);
+    imageLabel->setPixmap(pixmap.scaled(ui->widget->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    imageLabel->adjustSize();  // 调整 QLabel 大小以适应图片
+
+
+
+
     readline();
+}
+
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    QMainWindow::resizeEvent(event);
+    if (!imageLabel->pixmap()->isNull()) {
+        imageLabel->setPixmap(imageLabel->pixmap()->scaled(ui->widget->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    }
 }
 
 MainWindow::~MainWindow()
@@ -154,6 +184,11 @@ void MainWindow::onListViewClicked(const QModelIndex &index)
     qDebug() << "Clicked item: " << index.row();
     qDebug() << "Text: " << index.data().toString();
 
+    if (imageLabel) {
+        delete imageLabel;
+        imageLabel = nullptr;
+    }
+
 //    if(vp!=nullptr){
 //        delete vp;
 //    }
@@ -223,19 +258,55 @@ void MainWindow::handleRightClick(const QModelIndex &index, const QPoint &pos)
 {
     qDebug()<<"handleRightClick";
     if (!index.isValid()) {
+        qDebug()<<"RightClick";
+
+
+        QMenu contextMenu(this);
+        QAction action1("添加", this);
+        connect(&action1, &QAction::triggered, this, [this]() {
+
+//            QLineEdit *lineEdit = new QLineEdit(this);
+//            lineEdit->setPlaceholderText("Enter path here");
+
+
+//            // 处理用户输入
+//            connect(lineEdit, &QLineEdit::editingFinished, this, [this,&lineEdit]() {
+//                pathlist.push_back(lineEdit->text());
+//                update_crrent_file();
+//            });
+//            update_crrent_file();
+            bool ok;
+            QString text = QInputDialog::getText(this, tr("添加路径"),
+                                                 tr("路径:"), QLineEdit::Normal,
+                                                 "", &ok);
+            if (ok && !text.isEmpty()) {
+                pathlist.push_back(text);
+                update_crrent_file();
+            }
+
+        });
+
+        contextMenu.addAction(&action1);
+
+        contextMenu.exec(ui->crrent_file->mapToGlobal(pos));
         return;
+
     }
 
     QMenu contextMenu(this);
     QAction action1("删除", this);
-    QAction action2("Action 2", this);
+    QAction action2("添加", this);
     connect(&action1, &QAction::triggered, this, [this,index]() {
         qDebug() << "删除 triggered on item at row" << index.row();
         pathlist.removeAll(index.data().toString());
         update_crrent_file();
     });
-    connect(&action2, &QAction::triggered, this, [index]() {
-        qDebug() << "Action 2 triggered on item at row" << index.row();
+    connect(&action2, &QAction::triggered, this, [this,index]() {
+        qDebug() << "添加 triggered on item at row" << index.row();
+        QLineEdit *lineEdit = new QLineEdit(this);
+        pathlist.push_back(lineEdit->text());
+        update_crrent_file();
+
     });
 
     contextMenu.addAction(&action1);
@@ -247,5 +318,51 @@ void MainWindow::handleRightClick(const QModelIndex &index, const QPoint &pos)
 void MainWindow::seek(int seconds)
 {
     player->setPosition(seconds * 1000);
+
+}
+
+void MainWindow::setSpeed(const QString &text)
+{
+    qDebug() << "Setting text is:" << text;
+    QString tmp=text;
+    tmp.chop(1);
+
+
+    qreal speed = tmp.toDouble();
+    qDebug() << "Setting playback rate to:" << speed;
+
+
+qint64 currentPosition = player->position();
+
+    player->setPlaybackRate(speed);
+    player->pause();
+
+    player->setPosition(currentPosition);
+
+
+    player->play();
+
+//    switch(speed){
+//        case 0:
+//            player->setPlaybackRate(1.5);
+//            qDebug()<<"speed is 1.5"<<speed;
+
+//            break;
+//        case 1:
+//            player->setPlaybackRate(1.0);
+//            qDebug()<<"speed is 1.0"<<speed;
+
+
+//            break;
+//        case 2:
+//            player->setPlaybackRate(2.0);
+//            qDebug()<<"speed is 2.0"<<speed;
+
+
+//            break;
+
+//        default:
+//            break;
+//    }
 
 }

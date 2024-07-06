@@ -50,3 +50,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     current_v.qrc
+
+DISTFILES += \
+    ../../../Downloads/bbPlayer.jpg
