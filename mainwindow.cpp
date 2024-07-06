@@ -76,8 +76,11 @@ MainWindow::MainWindow(QWidget *parent) :
     imageLabel->setPixmap(pixmap.scaled(ui->widget->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     imageLabel->adjustSize();  // 调整 QLabel 大小以适应图片
 
+    //volumeSlider
+    ui->volumeSlider->setRange(0, 100);
+    ui->volumeSlider->setValue(player->volume());
 
-
+    connect(ui->volumeSlider, &QSlider::valueChanged, this, &MainWindow::setVolume);
 
     readline();
 }
@@ -342,27 +345,12 @@ qint64 currentPosition = player->position();
 
     player->play();
 
-//    switch(speed){
-//        case 0:
-//            player->setPlaybackRate(1.5);
-//            qDebug()<<"speed is 1.5"<<speed;
-
-//            break;
-//        case 1:
-//            player->setPlaybackRate(1.0);
-//            qDebug()<<"speed is 1.0"<<speed;
 
 
-//            break;
-//        case 2:
-//            player->setPlaybackRate(2.0);
-//            qDebug()<<"speed is 2.0"<<speed;
+}
 
-
-//            break;
-
-//        default:
-//            break;
-//    }
+void MainWindow::setVolume(int value)
+{
+    player->setVolume(value);
 
 }

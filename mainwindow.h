@@ -63,6 +63,7 @@ private slots:
     void seek(int seconds);
 
     void setSpeed(const QString &text);
+    void setVolume(int value);
 protected:
     void resizeEvent(QResizeEvent *event) override;
 
