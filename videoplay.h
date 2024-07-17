@@ -23,7 +23,7 @@ public:
     QString path_="/home/bbs/code/av/outshort.mp4";
     QMediaPlayer *player;
 
-private:
+
     QMediaPlaylist *playlist;
 
     QVideoWidget *videoWidget;

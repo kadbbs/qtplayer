@@ -4,7 +4,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    player(new QMediaPlayer(this) )
+    player(new QMediaPlayer(this) ),    isFullscreen(false)
+
 {
     ui->setupUi(this);
     positionUpdateTimer=(new QTimer(this));
@@ -83,6 +84,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->volumeSlider, &QSlider::valueChanged, this, &MainWindow::setVolume);
 
     readline();
+    this->installEventFilter(this);
+
 }
 
 
@@ -92,6 +95,65 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     if (!imageLabel->pixmap()->isNull()) {
         imageLabel->setPixmap(imageLabel->pixmap()->scaled(ui->widget->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
+}
+
+void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
+{
+
+    // 设置stackedWidget
+//    stackedWidget->addWidget(this);
+//    stackedWidget->addWidget(vp->videoWidget);
+//    stackedWidget->setCurrentIndex(1); // 显示第二个小部件
+
+//    setCentralWidget(stackedWidget);
+            if (vp->videoWidget->isFullScreen()) {
+                vp->videoWidget->setFullScreen(false);
+
+            } else {
+                vp->videoWidget->setFullScreen(true);
+            }
+//    if (event->button() == Qt::LeftButton) {
+//        toggleFullscreen();
+//    }
+//    QMainWindow::mouseDoubleClickEvent(event);
+//    if (this->isFullScreen()) {
+//        this->showNormal();
+
+//    } else {
+//        this->showFullScreen();
+//    }
+//toggleFullscreen();
+
+//    if (event->button() == Qt::LeftButton && ui->widget->rect().contains(event->pos())) {
+//        toggleFullscreen();
+//    }
+//    QMainWindow::mouseDoubleClickEvent(event);
+
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape && vp->videoWidget->isFullScreen()) {
+        vp->videoWidget->setFullScreen(false); // 退出全屏模式
+        qDebug()<<"Key_Escape退出全屏模式";
+        this->showNormal();  // 恢复到正常窗口模式
+        isFullscreen = false;    }
+    QMainWindow::keyPressEvent(event);
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if (keyEvent->key() == Qt::Key_Escape && isFullscreen) {
+            toggleFullscreen();
+            qDebug()<<"Key_Escape退出全屏模式";
+
+            return true;
+        }
+    }
+    // 调用基类方法以确保其他事件被处理
+    return QMainWindow::eventFilter(obj, event);
 }
 
 MainWindow::~MainWindow()
@@ -353,4 +415,25 @@ void MainWindow::setVolume(int value)
 {
     player->setVolume(value);
 
+}
+
+void MainWindow::toggleFullscreen()
+{
+//    if (isFullscreen) {
+//        vp->videoWidget->setFullScreen(false);
+//        this->showNormal();  // 恢复到正常模式
+//        qDebug()<<"        this->showNormal()恢复到正常模式";
+//        isFullscreen = false;
+//    } else {
+//        this->showFullScreen();  // 进入全屏模式
+//        vp->videoWidget->setFullScreen(true);
+//        isFullscreen = true;
+//    }
+    if (isFullscreen) {
+        stackedWidget->setCurrentWidget(this);  // 显示主要窗口
+        isFullscreen = false;
+    } else {
+        stackedWidget->setCurrentWidget(vp->videoWidget);  // 显示全屏视频窗口
+        isFullscreen = true;
+    }
 }
